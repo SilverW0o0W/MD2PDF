@@ -1,61 +1,69 @@
-# coding=utf-8
+#!/usr/bin/env python2.7
+# -*- encoding: utf-8 -*-
 import markdown
-# import pdfkit
-from xml.dom.minidom import Document
-import HTMLParser
+from xml.dom.minidom import Document, parseString
+from io import open as write_open
+import os
 
-# import cgi
+from utils import get_output_name
+from config import CSS_DIR
+from config import CSS_PATH
 
-with open('resume.md', 'r') as f:
-    text = f.read()
 
-text = text.decode('utf-8')
-text_html = markdown.markdown(text)
-text_html = text_html.encode('utf-8')
-# text_html = HTMLParser.HTMLParser().unescape(text_html)
+def md_to_html(file_name, output_name=None):
+    text = convert_md_html(file_name)
+    html = fill_html(text)
 
-doc = Document()
-html = doc.createElement("html")
-doc.appendChild(html)
-head = doc.createElement("head")
+    output_name = output_name if output_name else get_output_name(file_name, 'html')
 
-for css_name in ['1.css', '2.css', 'Github.css']:
-    link = doc.createElement("link")
-    link.setAttribute('rel', 'stylesheet')
-    link.setAttribute('type', r'text/css')
-    link.setAttribute('href', css_name)
-    head.appendChild(link)
-html.appendChild(head)
+    with write_open(output_name, 'w', encoding='utf-8') as f:
+        f.write(html)
 
-body = doc.createElement("body")
-article = doc.createElement("article")
-article.data = text_html
-content = doc.createTextNode(text_html)
-article.appendChild(content)
-body.appendChild(article)
-html.appendChild(body)
+    return output_name
 
-with open('test.html', 'w') as f:
-    f.write(doc.toprettyxml())
 
-options = {
-    'margin-top': '0.75in',
-    'margin-right': '0.75in',
-    'margin-bottom': '0.75in',
-    'margin-left': '0.75in',
-    'encoding': "UTF-8",
-    'disable-smart-shrinking': '',
-    'custom-header': [
-        ('Accept-Encoding', 'gzip')
-    ],
-    # 'cookie': [
-    #     ('cookie-name1', 'cookie-value1'),
-    #     ('cookie-name2', 'cookie-value2'),
-    # ],
-    'outline-depth': 10,
-}
+def convert_md_html(file_name):
+    with open(file_name, 'r') as f:
+        text = f.read()
+    text = text.decode('utf-8')
+    text_html = markdown.markdown(text)
+    text_html = text_html.encode('utf-8')
+    return text_html
 
-path_wk = r'C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe'
-config = pdfkit.configuration(wkhtmltopdf=path_wk)
-css = ['Github.css', '1.css', '2.css']
-pdfkit.from_file('test.html', 'test.pdf', configuration=config, options=options)
+
+def get_css_list(dir_path=CSS_DIR):
+    if not os.path.isdir(dir_path):
+        return []
+    files = os.listdir(dir_path)
+    files.sort()
+    files = [
+        '{0}/{1}'.format(dir_path, name)
+        for name in files
+        if name.endswith('.css')
+    ]
+    files.extend(CSS_PATH)
+    return files
+
+
+def fill_html(text):
+    doc = Document()
+    html = doc.createElement("html")
+    doc.appendChild(html)
+    head = doc.createElement("head")
+
+    for css in get_css_list():
+        link = doc.createElement("link")
+        link.setAttribute('rel', 'stylesheet')
+        link.setAttribute('type', r'text/css')
+        link.setAttribute('href', css)
+        head.appendChild(link)
+    html.appendChild(head)
+
+    body = doc.createElement("body")
+    text = '<article>{}</article>'.format(text)
+    article_dom = parseString(text)
+    article = article_dom.documentElement
+    body.appendChild(article)
+    html.appendChild(body)
+
+    return doc.toprettyxml()
