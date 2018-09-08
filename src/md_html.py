@@ -1,8 +1,8 @@
-#!/usr/bin/env python2.7
+#!/usr/bin/env python
 # -*- encoding: utf-8 -*-
 import markdown
 from xml.dom.minidom import Document, parseString
-from io import open as write_open
+from io import open
 import os
 
 from utils import get_output_name
@@ -16,18 +16,16 @@ def md_to_html(file_name, output_name=None):
 
     output_name = output_name if output_name else get_output_name(file_name, 'html')
 
-    with write_open(output_name, 'w', encoding='utf-8') as f:
+    with open(output_name, 'w', encoding='utf-8') as f:
         f.write(html)
 
     return output_name
 
 
 def convert_md_html(file_name):
-    with open(file_name, 'r') as f:
+    with open(file_name, 'r', encoding='utf-8') as f:
         text = f.read()
-    text = text.decode('utf-8')
     text_html = markdown.markdown(text)
-    text_html = text_html.encode('utf-8')
     return text_html
 
 
@@ -51,6 +49,12 @@ def fill_html(text):
     doc.appendChild(html)
     head = doc.createElement("head")
 
+    meta = doc.createElement("meta")
+    meta.setAttribute('http-equiv', 'Content-Type')
+    meta.setAttribute('content', 'text/html')
+    meta.setAttribute('charset', 'utf-8')
+    head.appendChild(meta)
+
     for css in get_css_list():
         link = doc.createElement("link")
         link.setAttribute('rel', 'stylesheet')
@@ -60,7 +64,8 @@ def fill_html(text):
     html.appendChild(head)
 
     body = doc.createElement("body")
-    text = '<article>{}</article>'.format(text)
+    text = u'<article>{}</article>'.format(text)
+    text = text.encode('utf-8')
     article_dom = parseString(text)
     article = article_dom.documentElement
     body.appendChild(article)

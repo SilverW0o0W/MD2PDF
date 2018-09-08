@@ -1,4 +1,4 @@
-#!/usr/bin/env python2.7
+#!/usr/bin/env python
 # -*- encoding: utf-8 -*-
 
 import os
@@ -23,6 +23,7 @@ WKH2P_OPTION = {
 }
 
 WKH2P_PATH = r'/usr/local/bin/wkhtmltopdf'
+# WKH2P_PATH = r'C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe'
 
 CSS_DIR = 'CSS/GitHub'
 CSS_PATH = []
