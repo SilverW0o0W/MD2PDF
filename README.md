@@ -9,3 +9,5 @@ Convert markdown file to PDF(GitHub style).
 功能简介：
 * Markdown to HTML
 * HTML to PDF
+
+Markdown to PDF need wkhtmltopdf.
