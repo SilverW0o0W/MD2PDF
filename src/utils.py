@@ -2,7 +2,8 @@
 # -*- encoding: utf-8 -*-
 
 import os
-from config import PWD
+
+PWD = os.path.dirname(os.path.realpath(__file__))
 
 
 def split_name(file_name):
