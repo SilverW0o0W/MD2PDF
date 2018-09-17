@@ -1,9 +1,8 @@
-#!/usr/bin/env python2.7
+#!/usr/bin/env python
 # -*- encoding: utf-8 -*-
 
 import os
-
-PWD = os.path.dirname(os.path.realpath(__file__))
+from config import PWD
 
 
 def split_name(file_name):

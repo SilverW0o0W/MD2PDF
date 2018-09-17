@@ -6,8 +6,7 @@ from io import open
 import os
 
 from utils import get_output_name
-from config import CSS_DIR
-from config import CSS_PATH
+from config import Config
 
 
 def md_to_html(file_name, output_name=None):
@@ -29,7 +28,7 @@ def convert_md_html(file_name):
     return text_html
 
 
-def get_css_list(dir_path=CSS_DIR):
+def get_css_list(dir_path=Config['CSS_DIR']):
     if not os.path.isdir(dir_path):
         return []
     files = os.listdir(dir_path)
@@ -39,7 +38,7 @@ def get_css_list(dir_path=CSS_DIR):
         for name in files
         if name.endswith('.css')
     ]
-    files.extend(CSS_PATH)
+    files.extend(Config['CSS_PATH'])
     return files
 
 
