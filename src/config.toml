@@ -1,7 +1,7 @@
 CSS_DIR = 'CSS/GitHub'
 CSS_PATH = []
 
-WKH2P_PATH = 'C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe'
+WKH2P_PATH = ''
 
 [WKH2P_OPTION]
 margin-top = '0.75in'
